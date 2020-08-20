@@ -19,22 +19,31 @@ router.post(
             const errors = validationResult(req);
 
             if (!errors.isEmpty()) {
-                return res.status(400).json({errors: errors.array(), message: 'Incorrect data'})
+                return res.status(400).json({
+                    errors: errors.array(),
+                    message: 'Incorrect data while registering'
+                })
             }
 
             const {email, password} = req.body;
             const candidate = await User.findOne({ email });
 
             if (candidate) {
-                return res.status(400).json({message: "Such user is already exist"});
+                return res.status(400).json({
+                    message: "Such user is already exist"
+                });
             }
 
             const hashedPwd = await bcrypt.hash(password, 12);
-            const user = new User({email: email, password: hashedPwd});
+            const user = new User({
+                email: email,
+                password: hashedPwd
+            });
             await User.save();
 
-            res.status(201).json({message: 'User has been created'});
-
+            res.status(201).json({
+                message: 'User has been created'
+            });
         } catch(e) {
             res.status(500).json({
                 message: 'Smth went wrong'
