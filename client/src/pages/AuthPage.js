@@ -3,7 +3,7 @@ import {useHttp} from "../hooks/http.hook";
 import {useMessage} from "../hooks/message.hook";
 
 export const AuthPage = () => {
-    const {message} = useMessage()
+    const message = useMessage();
     const {loading, request, error, clearError} = useHttp();
     const [form, setForm] = useState({
         email: '',
@@ -22,7 +22,7 @@ export const AuthPage = () => {
     const registerHandler = async () => {
         try {
             const data = await request('/api/auth/register', 'POST', {...form});
-            console.log('DATA', data);
+            message(data.message);
         } catch (e) {}
     }
 

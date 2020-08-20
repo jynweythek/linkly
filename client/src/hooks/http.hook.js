@@ -1,9 +1,9 @@
 import {useCallback, useState} from "react";
 
-
 export const useHttp = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         setLoading(true);
         try {
@@ -18,6 +18,7 @@ export const useHttp = () => {
             if (!response.ok) {
                 throw new Error(data.message || 'Smth went wrong');
             }
+
             setLoading(false);
 
             return data;
@@ -28,8 +29,7 @@ export const useHttp = () => {
         }
     }, []);
 
-    const clearError = () => setError(null);
+    const clearError = useCallback(() => setError(null), []);
 
     return {loading, request, error, clearError}
 }
-
