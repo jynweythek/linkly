@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useHttp} from "../hooks/http.hook";
 import {useMessage} from "../hooks/message.hook";
+import {AuthContext} from "../context/auth.context";
 
 export const AuthPage = () => {
+    const auth = useContext(AuthContext);
     const message = useMessage();
     const {loading, request, error, clearError} = useHttp();
     const [form, setForm] = useState({
@@ -15,6 +17,10 @@ export const AuthPage = () => {
         clearError();
     }, [error, message, clearError]);
 
+    useEffect(() => {
+        window.M.updateTextFields();
+    }, [])
+
     const changeHandler = event => {
         setForm({...form, [event.target.name]: event.target.value})
     }
@@ -22,6 +28,14 @@ export const AuthPage = () => {
     const registerHandler = async () => {
         try {
             const data = await request('/api/auth/register', 'POST', {...form});
+            message(data.message);
+        } catch (e) {}
+    }
+
+    const loginHandler = async () => {
+        try {
+            const data = await request('/api/auth/login', 'POST', {...form});
+            auth.login(data.token, data.userId)
             message(data.message);
         } catch (e) {}
     }
@@ -62,6 +76,7 @@ export const AuthPage = () => {
                         <button
                             className='btn yellow darken-4'
                             style={{marginRight: 10}}
+                            onClick={loginHandler}
                             disabled={loading}
                         >
                             Enter
